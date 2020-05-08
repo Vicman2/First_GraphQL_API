@@ -1,0 +1,30 @@
+{
+  "name": "first_graphql_api",
+  "version": "1.0.0",
+  "description": "My first graphql api which is based on an E-Commerce website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vicman2/First_GraphQL_API.git"
+  },
+  "keywords": [
+    "E-Commerce",
+    "Shopping",
+    "Cart"
+  ],
+  "author": "Vicman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vicman2/First_GraphQL_API/issues"
+  },
+  "homepage": "https://github.com/Vicman2/First_GraphQL_API#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^15.0.0"
+  }
+}
