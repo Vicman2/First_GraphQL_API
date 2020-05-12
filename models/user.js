@@ -24,16 +24,7 @@ const UserSchema = new Schema({
         type: String, 
         required: true
     },
-    cart: [{
-        product: {
-            type: Schema.Types.ObjectId, 
-            required: true
-        }, 
-        quantity: {
-            type: Number, 
-            required:true
-        }
-    }]
+    cart: [Schema.Types.ObjectId]
 })
 
 

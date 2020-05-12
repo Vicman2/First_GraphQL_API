@@ -5,26 +5,13 @@ const {getBook, getBooks} = require('../../services/books')
 const BookType = require('../types/bookType')
 const AuthorType = require('../types/AuthorType')
 const AuthType = require('../types/AuthType')
+const {validateLogin, validateId, validateAuthor} = require('../../Validators/validator')
 
 
-const helloType = new GraphQLObjectType({
-    name: "Hello", 
-    fields: {
-        id: {type: GraphQLString},
-        message: {type: GraphQLString}, 
-    }
-})
 
 const RootQuery = new GraphQLObjectType({
     name: "RootQueryType",
     fields: {
-        hello: {
-            type: helloType, 
-            args: {}, 
-            resolve(parentValue, args){
-                return {message: "Vicman is now destroying graphql", id: "2"}
-            }
-        },
         login: {
             type: AuthType, 
             args: {
@@ -32,6 +19,7 @@ const RootQuery = new GraphQLObjectType({
                 password: {type: new GraphQLNonNull(GraphQLString)}
             },
             resolve(parentValue, {email, password}){
+                validateLogin({email, password})
                 return login(email, password);
             }
         },
@@ -41,6 +29,7 @@ const RootQuery = new GraphQLObjectType({
                 id : {type: new GraphQLNonNull(GraphQLID)}
             }, 
             resolve(parentValue, {id}){
+                validateId({id})
                 return getAuthor(id);
             }
         },
@@ -50,12 +39,13 @@ const RootQuery = new GraphQLObjectType({
                 id: {type: new GraphQLNonNull(GraphQLID)}
             },
             resolve(parentValue, {id}){
+                validateId({id})
                 return getBook(id)
             }
         },
         getBooks: {
             type: new GraphQLList(BookType),
-            resolve(parentValue, args){
+            resolve(parentValue, args, req){
                 return getBooks()
             }
         }

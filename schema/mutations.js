@@ -1,10 +1,12 @@
 const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt} = require('graphql')
-const {addUser} = require('../services/user')
+const {addUser, addToCart} = require('../services/user')
 const {addAuthor, editAuthor, deleteAuthor} = require('../services/author');
 const {addBook, editBook, deleteBook}  = require('../services/books')
 const BookType = require('./types/bookType')
 const AuthorType = require('./types/AuthorType')
+const UserType = require('./types/UserType')
 const AuthType = require('./types/AuthType')
+const {validateSignUp, validateAuthor, validateBook, validateEditUser, validateId, validateCart} = require('../Validators/validator')
 
 const mutations = new GraphQLObjectType({
     name: "Mutation", 
@@ -18,6 +20,7 @@ const mutations = new GraphQLObjectType({
                 password: {type: new GraphQLNonNull(GraphQLString)}
             }, 
             resolve(parentValue, args){
+                validateSignUp(args)
                 return addUser(args)
             }
         }, 
@@ -28,7 +31,8 @@ const mutations = new GraphQLObjectType({
                 website: {type: new GraphQLNonNull(GraphQLString)}
             }, 
             resolve(parentValue, {name, website}){
-                return addAuthor(name, website)
+                validateAuthor({name, website})
+                return addAuthor(name, website);
             }
         }, 
         editAuthor: {
@@ -39,6 +43,7 @@ const mutations = new GraphQLObjectType({
                 website: {type: GraphQLString}
             }, 
             resolve(parentValue, args){
+                validateEditUser(args)
                 return editAuthor(args)
             }
         },
@@ -48,6 +53,7 @@ const mutations = new GraphQLObjectType({
                 id: {type: new GraphQLNonNull(GraphQLID)}
             },
             resolve(parentValue, {id}){
+                validateId({id})
                 return deleteAuthor(id)
             }
         }, 
@@ -65,6 +71,7 @@ const mutations = new GraphQLObjectType({
                 author: {type: new GraphQLNonNull(GraphQLString)}
             }, 
             resolve(parentValue, args){
+                validateBook(args)
                 return addBook(args)
             }
         },
@@ -91,7 +98,19 @@ const mutations = new GraphQLObjectType({
                 id: {type : new GraphQLNonNull(GraphQLID)}
             },
             resolve(parentValue, {id}){
+                validateId({id})
                 return deleteBook(id)
+            }
+        }, 
+        addToCart: {
+            type: UserType, 
+            args: {
+                userId: {type: new GraphQLNonNull(GraphQLID)}, 
+                bookId: {type: new GraphQLNonNull(GraphQLID)},
+            }, 
+            resolve(parentValue, {userId, bookId}){
+                validateCart({userId, bookId})
+                return addToCart(userId, bookId)
             }
         }
     }

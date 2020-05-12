@@ -1,4 +1,4 @@
-const {GraphQLObjectType, GraphQLString, GraphQLID} = require('graphql');
+const {GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList} = require('graphql');
 
 
 const userType = new GraphQLObjectType({
@@ -8,7 +8,8 @@ const userType = new GraphQLObjectType({
         name: {type: GraphQLString}, 
         email: {type: GraphQLString}, 
         phone: {type: GraphQLString},
-        imageUrl: {type: GraphQLString}
+        imageUrl: {type: GraphQLString}, 
+        cart: {type: new GraphQLList(GraphQLID)}
     }
 })
 

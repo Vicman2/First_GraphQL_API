@@ -1,6 +1,7 @@
 const userModel = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
+const bookModel = require('../models/BookModel')
 
 exports.addUser = async({name, email, phone, password})=> {
     const existingUser =await userModel.findOne({email})
@@ -33,6 +34,30 @@ exports.login = async(email, password)=>{
 
 exports.getUser = async(email)=>{
     const existingUser = await userModel.findOne({email})
-    if(!existingUser) {throw new Error("User do not exist")}
+    if(!existingUser) throw new Error("User do not exist")
     return existingUser;
+}
+exports.getUsers = async()=> {
+    const users = await userModel.find(); 
+    if(users.length === 0) throw new Error("There is no user in the database")
+    return users
+}
+
+exports.addToCart = async(userId, bookId)=> {
+    const existingBook = await bookModel.findOne({_id: bookId});
+    if(!existingBook) throw new Error("Book do not exist");
+    const existingUser = await userModel.findOne({_id:userId});
+    if(!existingUser) throw new Error("User do not exist");
+    console.log(existingUser)
+    const updatedUser = {...existingUser._doc}
+    console.log(updatedUser)
+    const cart = [...updatedUser.cart]
+    const isProductInCart = cart.find(product => product == bookId)
+    if(!isProductInCart){
+        cart.push(bookId);
+    }
+    updatedUser.cart = cart;
+    existingUser._doc = updatedUser
+    const updated = await existingUser.save();
+    return updated;
 }
