@@ -85,3 +85,12 @@ exports.validateCart = (args) => {
     const result  = joi.validate(args, schema)
     if(result.error) throw new Error(result.error.message)
 }
+
+exports.validateMakeCart = args => {
+    const schema = {
+        userId : joi.string().required(), 
+        books : joi.array().required()
+    }
+    const result  = joi.validate(args, schema)
+    if(result.error) throw new Error(result.error.message)
+}

@@ -3,7 +3,6 @@ const AuthorModel = require('../models/author');
 
 
 exports.addBook = async(data)=> {
-    console.log(data)
     data.title = data.title.toLowerCase();
     data.author = data.author.toLowerCase();
     const existingBook = await bookModel.findOne({title: data.title})
@@ -24,14 +23,11 @@ exports.addBook = async(data)=> {
         author:author._id
     })
     const savedBook = await newBook.save();
-    console.log(savedBook)
     return savedBook;
 }
 
 exports.getBook = async(id) => {
-    console.log(id)
     const existingBook = await bookModel.findById(id).populate('author')
-    console.log(existingBook)
     if(!existingBook)  throw new Error("Book do not exist! "); 
     return existingBook
 }

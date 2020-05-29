@@ -1,12 +1,14 @@
-const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt} = require('graphql')
-const {addUser, addToCart} = require('../services/user')
+const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt, GraphQLList} = require('graphql')
+const {addUser, addToCart, makeCart} = require('../services/user')
 const {addAuthor, editAuthor, deleteAuthor} = require('../services/author');
 const {addBook, editBook, deleteBook}  = require('../services/books')
 const BookType = require('./types/bookType')
 const AuthorType = require('./types/AuthorType')
 const UserType = require('./types/UserType')
 const AuthType = require('./types/AuthType')
-const {validateSignUp, validateAuthor, validateBook, validateEditUser, validateId, validateCart} = require('../Validators/validator')
+const {checkUser} = require('../util')
+const {validateSignUp, validateAuthor, validateBook, 
+    validateEditUser, validateId, validateCart, validateMakeCart} = require('../Validators/validator')
 
 const mutations = new GraphQLObjectType({
     name: "Mutation", 
@@ -18,7 +20,7 @@ const mutations = new GraphQLObjectType({
                 email: {type: new GraphQLNonNull(GraphQLString)}, 
                 phone: {type: new GraphQLNonNull(GraphQLString)}, 
                 password: {type: new GraphQLNonNull(GraphQLString)}
-            }, 
+            },
             resolve(parentValue, args){
                 validateSignUp(args)
                 return addUser(args)
@@ -53,8 +55,8 @@ const mutations = new GraphQLObjectType({
                 id: {type: new GraphQLNonNull(GraphQLID)}
             },
             resolve(parentValue, {id}){
-                validateId({id})
-                return deleteAuthor(id)
+                validateId({id});
+                return deleteAuthor(id);
             }
         }, 
         addBook: {
@@ -105,12 +107,23 @@ const mutations = new GraphQLObjectType({
         addToCart: {
             type: UserType, 
             args: {
-                userId: {type: new GraphQLNonNull(GraphQLID)}, 
                 bookId: {type: new GraphQLNonNull(GraphQLID)},
             }, 
-            resolve(parentValue, {userId, bookId}){
+            resolve(parentValue, {bookId}, {user}){
+                checkUser(user)
                 validateCart({userId, bookId})
                 return addToCart(userId, bookId)
+            }
+        },
+        makeCart: {
+            type: UserType,
+            args:{
+                books: {type: new GraphQLNonNull(new GraphQLList(GraphQLID))}
+            }, 
+            resolve(pararentValue,args,{user}){
+                checkUser(user)
+                validateMakeCart(args);
+                return makeCart(user, args.books)
             }
         }
     }

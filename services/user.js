@@ -1,6 +1,7 @@
 const userModel = require('../models/user')
 const bcrypt = require('bcryptjs')
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const {jwtKey} = require('../config')
 const bookModel = require('../models/BookModel')
 
 exports.addUser = async({name, email, phone, password})=> {
@@ -16,19 +17,16 @@ exports.addUser = async({name, email, phone, password})=> {
     })
 
     const savedUser = await freshUser.save();
-    const token = jwt.sign({email, id: savedUser._id}, "CanYouGuess ?")
+    const token = jwt.sign({email, id: savedUser._id}, jwtKey)
     return {...savedUser, token};
 }
 
 exports.login = async(email, password)=>{
     const existingUser = await userModel.findOne({email})
-    if(!existingUser) throw new Error("User do not exist")
-    console.log(existingUser)
+    if(!existingUser) throw new Error("User do not exist");
     const matched = await bcrypt.compare(password, existingUser.password);
-    console.log(email, password)
     if(!matched) throw new Error("Wrong Password")
-    const token = jwt.sign({id: existingUser._id, email}, "CanYouGuess ?")
-    console.log(token)
+    const token = jwt.sign({id: existingUser._id, email}, jwtKey)
     return {...existingUser, token}
 }
 
@@ -43,14 +41,12 @@ exports.getUsers = async()=> {
     return users
 }
 
-exports.addToCart = async(userId, bookId)=> {
+exports.addToCart = async({userId}, bookId)=> {
     const existingBook = await bookModel.findOne({_id: bookId});
     if(!existingBook) throw new Error("Book do not exist");
     const existingUser = await userModel.findOne({_id:userId});
     if(!existingUser) throw new Error("User do not exist");
-    console.log(existingUser)
     const updatedUser = {...existingUser._doc}
-    console.log(updatedUser)
     const cart = [...updatedUser.cart]
     const isProductInCart = cart.find(product => product == bookId)
     if(!isProductInCart){
@@ -61,3 +57,24 @@ exports.addToCart = async(userId, bookId)=> {
     const updated = await existingUser.save();
     return updated;
 }
+
+exports.makeCart = async({userId}, arrayOfBooks)=> {
+    if(!user) throw new Error("Please, pass ")
+    const books = await bookModel.find();
+    for(let i = 0 ; i<arrayOfBooks.length; i++){
+        let bookExist = books.find(book => book._id == arrayOfBooks[i]); 
+        if(!bookExist) throw new Error("At least one book do not exist!")
+    }
+    const existingUser = await userModel.findOne({_id:userId});
+    if(!existingUser) throw new Error("User do not exist");
+    const updatedUser = {...existingUser._doc}
+    const cart = [...updatedUser.cart];
+    for(let i = 0 ; i<arrayOfBooks.length; i++){
+        let bookinCart = cart.find(bookId => bookId === arrayOfBooks[i].id); 
+        if(!bookinCart) cart.push(arrayOfBooks[i])
+    }
+    updatedUser.cart = cart;
+    existingUser._doc = updatedUser
+    const updated = await existingUser.save();
+    return updated;
+} 

@@ -24,6 +24,11 @@ const UserSchema = new Schema({
         type: String, 
         required: true
     },
+    address: {
+        type: String, 
+        required: false,
+        default: ""
+    },
     cart: [Schema.Types.ObjectId]
 })
 
