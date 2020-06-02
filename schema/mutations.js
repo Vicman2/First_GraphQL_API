@@ -111,8 +111,8 @@ const mutations = new GraphQLObjectType({
             }, 
             resolve(parentValue, {bookId}, {user}){
                 checkUser(user)
-                validateCart({userId, bookId})
-                return addToCart(userId, bookId)
+                validateCart({bookId})
+                return addToCart(user, bookId)
             }
         },
         makeCart: {

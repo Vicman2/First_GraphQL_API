@@ -27,12 +27,12 @@ exports.addBook = async(data)=> {
 }
 
 exports.getBook = async(id) => {
-    const existingBook = await bookModel.findById(id).populate('author')
+    const existingBook = await bookModel.findById(id)
     if(!existingBook)  throw new Error("Book do not exist! "); 
     return existingBook
 }
 exports.getBooks = async() => {
-    const allBooks = await bookModel.find().populate('author');
+    const allBooks = await bookModel.find()
     if (allBooks.length ===0) throw new Error("No book in the database")
     return allBooks
 }
@@ -52,7 +52,7 @@ exports.editBook = async(data) => {
 }
 
 exports.deleteBook = async(id) => {
-    const existingBook = await bookModel.findById(id).populate('author')
+    const existingBook = await bookModel.findById(id)
     if(!existingBook)  throw new Error("Book do not exist! ");
     const deletedBook = await existingBook.remove();
     return deletedBook;

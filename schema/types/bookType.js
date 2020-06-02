@@ -1,4 +1,5 @@
 const {GraphQLString, GraphQLObjectType, GraphQLID, GraphQLInt} = require('graphql')
+const {getAuthor} = require('../../services/author')
 const AuthorType = require('./AuthorType')
 
 
@@ -21,7 +22,12 @@ const bookType = new GraphQLObjectType({
         price: {type: GraphQLInt}, 
         imageUrl: {type: GraphQLString},
         details: {type: detail}, 
-        author: {type: AuthorType}
+        author: {
+            type: AuthorType, 
+            resolve(parentValue, args){
+                return getAuthor(parentValue.author)
+            }
+        }
     }
 })
 

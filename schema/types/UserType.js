@@ -1,4 +1,6 @@
 const {GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList} = require('graphql');
+const {getBooks} = require("../../services/books")
+const BookType = require("./bookType")
 
 
 const userType = new GraphQLObjectType({
@@ -9,7 +11,14 @@ const userType = new GraphQLObjectType({
         email: {type: GraphQLString}, 
         phone: {type: GraphQLString},
         imageUrl: {type: GraphQLString}, 
-        cart: {type: new GraphQLList(GraphQLID)}
+        cart: {
+            type: new GraphQLList(BookType), 
+            resolve(parentvalue, arg){
+                return getBooks().filter(bookId => {
+                    
+                })
+            }
+        }
     }
 })
 

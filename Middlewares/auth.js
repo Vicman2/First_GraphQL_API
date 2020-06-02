@@ -2,12 +2,12 @@ const jwt = require('jsonwebtoken')
 const {jwtKey} = require('../config')
 
 
-exports.authenticate = async(req, res, next)=>{
-    const token = req.headers.autorization
+exports.authenticate = function(req, res, next){
+    const token = req.headers.authorization
     let user = null
-    if(token){
+    if(typeof token === "string" && token !=="null"){
         user = jwt.verify(token, jwtKey)
     }
-    req.user = user
+    req.user = user? user : {}
     next()
 }

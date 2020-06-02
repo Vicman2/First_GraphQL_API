@@ -29,7 +29,10 @@ const UserSchema = new Schema({
         required: false,
         default: ""
     },
-    cart: [Schema.Types.ObjectId]
+    cart: [ {
+         type: Schema.Types.ObjectId, 
+         ref:"books"
+        }]
 })
 
 

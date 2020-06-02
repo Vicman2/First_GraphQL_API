@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const {jwtKey} = require('../config')
 const bookModel = require('../models/BookModel')
 
+
 exports.addUser = async({name, email, phone, password})=> {
     const existingUser =await userModel.findOne({email})
     if(existingUser) { throw new Error("Email in use")}
@@ -30,8 +31,8 @@ exports.login = async(email, password)=>{
     return {...existingUser, token}
 }
 
-exports.getUser = async(email)=>{
-    const existingUser = await userModel.findOne({email})
+exports.getUser = async(id)=>{
+    const existingUser = await userModel.findById(id)
     if(!existingUser) throw new Error("User do not exist")
     return existingUser;
 }
@@ -41,40 +42,39 @@ exports.getUsers = async()=> {
     return users
 }
 
-exports.addToCart = async({userId}, bookId)=> {
-    const existingBook = await bookModel.findOne({_id: bookId});
+exports.addToCart = async({id}, bookId)=> {
+    const existingBook = await bookModel.findById({_id: bookId});
     if(!existingBook) throw new Error("Book do not exist");
-    const existingUser = await userModel.findOne({_id:userId});
+    const existingUser = await userModel.findById(id);
     if(!existingUser) throw new Error("User do not exist");
-    const updatedUser = {...existingUser._doc}
-    const cart = [...updatedUser.cart]
-    const isProductInCart = cart.find(product => product == bookId)
+    const cart = [...existingUser.cart]
+    console.log(cart)
+    const isProductInCart = cart.find(product => product === bookId)
+    console.log(isProductInCart)
     if(!isProductInCart){
         cart.push(bookId);
+    }else{
+        throw new Error("Book is already in cart")
     }
-    updatedUser.cart = cart;
-    existingUser._doc = updatedUser
+    existingUser.cart = cart;
     const updated = await existingUser.save();
     return updated;
 }
 
-exports.makeCart = async({userId}, arrayOfBooks)=> {
-    if(!user) throw new Error("Please, pass ")
+exports.makeCart = async({id}, arrayOfBooks)=> {
     const books = await bookModel.find();
     for(let i = 0 ; i<arrayOfBooks.length; i++){
         let bookExist = books.find(book => book._id == arrayOfBooks[i]); 
         if(!bookExist) throw new Error("At least one book do not exist!")
     }
-    const existingUser = await userModel.findOne({_id:userId});
+    const existingUser = await userModel.findById(id);
     if(!existingUser) throw new Error("User do not exist");
-    const updatedUser = {...existingUser._doc}
-    const cart = [...updatedUser.cart];
+    const cart = [...existingUser.cart];
     for(let i = 0 ; i<arrayOfBooks.length; i++){
-        let bookinCart = cart.find(bookId => bookId === arrayOfBooks[i].id); 
+        let bookinCart = cart.find(bookId => bookId == arrayOfBooks[i]); 
         if(!bookinCart) cart.push(arrayOfBooks[i])
     }
-    updatedUser.cart = cart;
-    existingUser._doc = updatedUser
+    existingUser.cart = cart;
     const updated = await existingUser.save();
     return updated;
 } 

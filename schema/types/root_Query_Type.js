@@ -1,11 +1,12 @@
 const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLList} = require("graphql")
-const {login, getUsers} = require("../../services/user")
+const {login, getUsers, getUser} = require("../../services/user")
 const {getAuthor} = require('../../services/author')
 const {getBook, getBooks} = require('../../services/books')
 const BookType = require('../types/bookType')
 const UserType = require('./UserType')
 const AuthorType = require('../types/AuthorType')
 const AuthType = require('../types/AuthType')
+const {checkUser} = require('../../util')
 const {validateLogin, validateId, validateAuthor} = require('../../Validators/validator')
 
 
@@ -24,12 +25,20 @@ const RootQuery = new GraphQLObjectType({
                 return login(email, password);
             }
         },
+        getUserForCart: {
+            type: UserType, 
+            resolve(parentValue, args, {user}){
+                checkUser(user);
+                return getUser(user.id)
+            }
+        },
         getUsers: {
             type: new GraphQLList(UserType), 
             resolve(parentValue, args){
                 return getUsers()
             }
         },
+        
         getAuthor:{
             type: AuthorType, 
             args: {
