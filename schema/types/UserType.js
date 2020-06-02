@@ -1,5 +1,5 @@
 const {GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList} = require('graphql');
-const {getBooks} = require("../../services/books")
+const {equipCart} = require("../../services/user")
 const BookType = require("./bookType")
 
 
@@ -14,9 +14,7 @@ const userType = new GraphQLObjectType({
         cart: {
             type: new GraphQLList(BookType), 
             resolve(parentvalue, arg){
-                return getBooks().filter(bookId => {
-                    
-                })
+               return equipCart(parentvalue.cart)
             }
         }
     }
