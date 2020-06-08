@@ -48,9 +48,12 @@ exports.addToCart = async({id}, bookId)=> {
     const existingUser = await userModel.findById(id);
     if(!existingUser) throw new Error("User do not exist");
     const cart = [...existingUser.cart]
-    const isProductInCart = cart.find(product => product === bookId)
+    const isProductInCart = cart.find(product => product.bookId == bookId)
     if(!isProductInCart){
-        cart.push(bookId);
+        cart.push({
+            bookId,
+            quantity:1
+        });
     }else{
         throw new Error("Book is already in cart")
     }
@@ -69,26 +72,55 @@ exports.makeCart = async({id}, arrayOfBooks)=> {
     if(!existingUser) throw new Error("User do not exist");
     const cart = [...existingUser.cart];
     for(let i = 0 ; i<arrayOfBooks.length; i++){
-        let bookinCart = cart.find(bookId => bookId == arrayOfBooks[i]); 
-        if(!bookinCart) cart.push(arrayOfBooks[i])
+        let bookinCart = cart.find(book => book.bookId == arrayOfBooks[i]); 
+        if(!bookinCart) {
+            cart.push({
+                bookId: arrayOfBooks[i],
+                quantity: 1
+            })
+        }
     }
     existingUser.cart = cart;
     const updated = await existingUser.save();
     return updated;
 }
 
-exports.equipCart = async(arrayOfBooks)=> {
+exports.equipBook = async(bookId)=> {
     const books = await bookModel.find();
-    const cartBooks = books.filter(book => arrayOfBooks.includes(book._id))
-    return cartBooks
+    const foundBook = books.find(book => book._id.toString() == bookId)
+    return foundBook;
 }
 
 exports.deleteBookFromCart = async(bookId, userId) => {
     const user = await userModel.findById(userId)
     if(!user) throw new Error("User do not exist");
-    const bookIndexInCart = user.cart.indexOf(bookId);
-    if(bookIndexInCart === -1) throw new Error("Book is not in cart");
+    let bookIndexInCart;
+    const bookToRemove = user.cart.find((book,indexOfBook)=> {
+        if(book.bookId == bookId){
+            bookIndexInCart = indexOfBook
+            return book
+        }
+    });
+    
+    if(!bookToRemove) throw new Error("Book is not in cart");
     user.cart.splice(bookIndexInCart,1)
     const updatedUser = await user.save();
     return updatedUser
+}
+exports.changeBookQuantity = async (bookId, quantity, userId) => {
+    const user = await userModel.findById(userId)
+    if(!user) throw new Error("User do not exist");
+    let indexOfBook
+    const bookToUpdate = user.cart.find((book, index) => {
+        if(book.bookId.toString() == bookId){
+            indexOfBook = index
+            return book
+        }
+    })
+    if(!bookToUpdate) throw new Error("Book is not in cart change")
+    bookToUpdate.quantity = quantity;
+    user.cart.splice(indexOfBook, 1)
+    user.cart.push(bookToUpdate);
+    const updatedUser = await user.save();
+    return updatedUser;
 }

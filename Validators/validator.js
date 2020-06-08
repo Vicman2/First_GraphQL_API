@@ -92,3 +92,11 @@ exports.validateMakeCart = args => {
     const result  = joi.validate(args, schema)
     if(result.error) throw new Error(result.error.message);
 }
+exports.validateChangeBookQuantity = args => {
+    const schema = {
+        bookId : joi.string().required(), 
+        quantity: joi.number().integer().required()
+    }
+    const result  = joi.validate(args, schema)
+    if(result.error) throw new Error(result.error.message);
+}

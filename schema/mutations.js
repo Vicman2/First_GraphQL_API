@@ -1,5 +1,5 @@
 const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt, GraphQLList} = require('graphql')
-const {addUser, addToCart, makeCart, deleteBookFromCart} = require('../services/user')
+const {addUser, addToCart, makeCart, deleteBookFromCart, changeBookQuantity} = require('../services/user')
 const {addAuthor, editAuthor, deleteAuthor} = require('../services/author');
 const {addBook, editBook, deleteBook}  = require('../services/books')
 const BookType = require('./types/bookType')
@@ -9,7 +9,7 @@ const AuthType = require('./types/AuthType')
 const {checkUser} = require('../util')
 const {validateSignUp, validateAuthor, validateBook, 
     validateEditUser, validateId, validateCart, 
-    validateMakeCart} = require('../Validators/validator')
+    validateMakeCart, validateChangeBookQuantity} = require('../Validators/validator')
 
 const mutations = new GraphQLObjectType({
     name: "Mutation", 
@@ -136,6 +136,18 @@ const mutations = new GraphQLObjectType({
                 checkUser(user)
                 validateCart({bookId})
                 return deleteBookFromCart(bookId, user.id)
+            }
+        }, 
+        changeBookQuantity: {
+            type: UserType, 
+            args: {
+                bookId: {type: new GraphQLNonNull(GraphQLID)}, 
+                quantity : {type:new GraphQLNonNull(GraphQLInt) }
+            }, 
+            resolve(parentValue, args, {user}){
+                checkUser(user)
+                validateChangeBookQuantity(args)
+                return changeBookQuantity(args.bookId, args.quantity, user.id);
             }
         }
     }

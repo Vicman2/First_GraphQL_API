@@ -10,7 +10,7 @@ const app = express()
 const port = config.port || 5000
 // enable cors
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: config.accessApi,
     credentials: true
   };
 

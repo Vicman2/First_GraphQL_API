@@ -29,10 +29,19 @@ const UserSchema = new Schema({
         required: false,
         default: ""
     },
-    cart: [ {
-         type: Schema.Types.ObjectId, 
-         ref:"books"
-        }]
+    cart: [
+        {
+            bookId:  {
+                type: Schema.Types.ObjectId, 
+                ref:"books"
+               },
+            quantity: {
+                type: Number,
+                required: true,
+                default: 1
+            }
+        }
+    ]
 })
 
 
