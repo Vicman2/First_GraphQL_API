@@ -1,5 +1,5 @@
 const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt, GraphQLList} = require('graphql')
-const {addUser, addToCart, makeCart, deleteBookFromCart, changeBookQuantity} = require('../services/user')
+const {addUser, addToCart, makeCart, deleteBookFromCart, changeBookQuantity, emptyCart} = require('../services/user')
 const {addAuthor, editAuthor, deleteAuthor} = require('../services/author');
 const {addBook, editBook, deleteBook}  = require('../services/books')
 const BookType = require('./types/bookType')
@@ -148,6 +148,13 @@ const mutations = new GraphQLObjectType({
                 checkUser(user)
                 validateChangeBookQuantity(args)
                 return changeBookQuantity(args.bookId, args.quantity, user.id);
+            }
+        }, 
+        emptyUserCart: {
+            type: UserType, 
+            resolve(parentValue, args, {user}){
+                checkUser(user);
+                return emptyCart(user.id)
             }
         }
     }

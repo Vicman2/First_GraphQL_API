@@ -124,3 +124,11 @@ exports.changeBookQuantity = async (bookId, quantity, userId) => {
     const updatedUser = await user.save();
     return updatedUser;
 }
+
+exports.emptyCart = async(userId) => {
+    const user = await userModel.findById(userId);
+    if(!user) throw new Error("User do not exist");
+    user.cart = []
+    const updatedUser = await user.save();
+    return updatedUser
+}
