@@ -19,8 +19,8 @@ const authorSchema = new Schema({
     rating: {
         type: Number,
         default: 0
-    }
-})
+    }, 
+}, {timestamps: true})
 
 
 module.exports = mongoose.model("author", authorSchema)

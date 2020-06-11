@@ -15,6 +15,6 @@ const orderSchema = new Schema({
         book: {type: Schema.Types.ObjectId, require: true},
         quantity: {type: Number, required: true}
     }]
-})
+}, {timestamps: true})
 
 module.exports = mongoose.model('order', orderSchema);

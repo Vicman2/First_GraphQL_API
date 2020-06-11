@@ -49,7 +49,7 @@ const BookSchema = new Schema({
         ref: 'author',
         required: true
     }
-})
+}, {timestamps: true})
 
 
 module.exports = mongoose.model("books", BookSchema)
