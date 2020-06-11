@@ -9,7 +9,12 @@ const config = require('./config')
 const app = express()
 const port = config.port || 5000
 // enable cors
-app.use(cors());
+const corsOptions = {
+    origin: config.accessApi,
+    credentials: true
+  };
+
+app.use(cors(corsOptions));
 app.use(authenticate)
 app.use('/api/books', express.static('./public/books'))
 app.use('/graphql', ExpressGraphQL({
