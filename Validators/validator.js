@@ -100,3 +100,10 @@ exports.validateChangeBookQuantity = args => {
     const result  = joi.validate(args, schema)
     if(result.error) throw new Error(result.error.message);
 }
+exports.validateOrderId = (args) => {
+    const schema = {
+        orderId: joi.string().required()
+    }
+    const result  = joi.validate(args, schema)
+    if(result.error) throw new Error(result.error.message)
+}

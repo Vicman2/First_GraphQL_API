@@ -2,6 +2,8 @@ const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLInt, 
 const {addUser, addToCart, makeCart, deleteBookFromCart, changeBookQuantity, emptyCart} = require('../services/user')
 const {addAuthor, editAuthor, deleteAuthor} = require('../services/author');
 const {addBook, editBook, deleteBook}  = require('../services/books')
+const {makeOrder, deleteOrder} = require('../services/order')
+const OrderType  = require('./types/OrderType');
 const BookType = require('./types/bookType')
 const AuthorType = require('./types/AuthorType')
 const UserType = require('./types/UserType')
@@ -9,7 +11,7 @@ const AuthType = require('./types/AuthType')
 const {checkUser} = require('../util')
 const {validateSignUp, validateAuthor, validateBook, 
     validateEditUser, validateId, validateCart, 
-    validateMakeCart, validateChangeBookQuantity} = require('../Validators/validator')
+    validateMakeCart, validateChangeBookQuantity, validateOrderId} = require('../Validators/validator');
 
 const mutations = new GraphQLObjectType({
     name: "Mutation", 
@@ -155,6 +157,24 @@ const mutations = new GraphQLObjectType({
             resolve(parentValue, args, {user}){
                 checkUser(user);
                 return emptyCart(user.id)
+            }
+        },
+        makeOrder: {
+            type: OrderType, 
+            resolve(parentValue, args, {user}){
+                checkUser(user);
+                return makeOrder(user.id)
+            }
+        },
+        deleteOrder: {
+            type: OrderType,
+            args: {
+                orderId: {type: new GraphQLNonNull(GraphQLID)}
+            },
+            resolve(parentValue, args, {user}){
+                checkUser(user);
+                validateOrderId(args)
+                return deleteOrder(args.orderId, user.id)
             }
         }
     }

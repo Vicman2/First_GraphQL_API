@@ -2,12 +2,14 @@ const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLList}
 const {login, getUsers, getUser} = require("../../services/user")
 const {getAuthor} = require('../../services/author')
 const {getBook, getBooks} = require('../../services/books')
+const { getOrders, getOrder } = require("../../services/order")
+const OrderType = require('./OrderType')
 const BookType = require('../types/bookType')
 const UserType = require('./UserType')
 const AuthorType = require('../types/AuthorType')
 const AuthType = require('../types/AuthType')
 const {checkUser} = require('../../util')
-const {validateLogin, validateId, validateAuthor} = require('../../Validators/validator')
+const {validateLogin, validateId, validateAuthor, validateOrderId} = require('../../Validators/validator')
 
 
 
@@ -63,6 +65,22 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(BookType),
             resolve(parentValue, args, req){
                 return getBooks()
+            }
+        },
+        getOrders: {
+            type: new GraphQLList(OrderType), 
+            resolve(parentValue, args, {user}){
+                return getOrders(user.id)
+            }
+        },
+        getOrder: {
+            type: OrderType, 
+            args: {
+                orderId: {type: new GraphQLNonNull(GraphQLID)}
+            },
+            resolve(parentValue, args, {user}){
+                validateOrderId(args)
+                return getOrder(args.id, user.id);
             }
         }
     }
