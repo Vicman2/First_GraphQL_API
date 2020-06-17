@@ -5,7 +5,7 @@ const userModel = require('../models/user')
 exports.makeOrder = async(userId)=> {
     const user = await userModel.findById(userId).populate('cart.bookId');
     const userWithoutPop = await userModel.findById(userId);
-    if(!user) throw new Error("User do not exist")
+    if(!user) throw new Error("User do not exist")   
     const userOrder = userWithoutPop.cart.map(cart => {
         return {
             book : cart.bookId, 
@@ -32,12 +32,11 @@ exports.deleteOrder = async (orderId, userId) => {
 
 exports.getOrders = async (userId) => {
     const orders = await orderModel.find({user: userId});
-    if(orders.length === 0) throw new Error("You have no order please")
     return orders;
 }
 
 exports.getOrder = async (orderId, userId) => {
-    const order = await userModel.findById(orderId)
+    const order = await orderModel.findOne({user: userId, _id: orderId})
     if(!order) throw new Error("No such order exist");
     return order;
 }

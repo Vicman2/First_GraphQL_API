@@ -70,6 +70,7 @@ const RootQuery = new GraphQLObjectType({
         getOrders: {
             type: new GraphQLList(OrderType), 
             resolve(parentValue, args, {user}){
+                checkUser(user)
                 return getOrders(user.id)
             }
         },
@@ -79,8 +80,9 @@ const RootQuery = new GraphQLObjectType({
                 orderId: {type: new GraphQLNonNull(GraphQLID)}
             },
             resolve(parentValue, args, {user}){
+                checkUser(user)
                 validateOrderId(args)
-                return getOrder(args.id, user.id);
+                return getOrder(args.orderId, user.id);
             }
         }
     }

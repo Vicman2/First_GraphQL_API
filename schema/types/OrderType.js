@@ -1,4 +1,4 @@
-const {GraphQLObjectType, GraphQLID, GraphQLInt, GraphQLList} = require('graphql')
+const {GraphQLObjectType, GraphQLID, GraphQLInt, GraphQLList, GraphQLString} = require('graphql')
 const BookType = require('./bookType')
 const {equipBook} = require("../../services/user")
 
@@ -23,6 +23,7 @@ const orderType = new GraphQLObjectType({
         _id: {type: GraphQLID}, 
         totalPrice: {type: GraphQLInt}, 
         user: {type: GraphQLID}, 
+        createdAt: {type: GraphQLString},
         orders: {
             type: new GraphQLList(OrderItem)
         }
