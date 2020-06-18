@@ -26,7 +26,7 @@ exports.makeOrder = async(userId)=> {
 exports.deleteOrder = async (orderId, userId) => {
     const order = await orderModel.find({user: userId, _id: orderId});
     if(!order) throw new Error("Such order do not exist for this user");
-    const deletedOrder = await order.remove();
+    const deletedOrder = await orderModel.findByIdAndDelete(orderId)
     return deletedOrder;
 }
 

@@ -110,17 +110,13 @@ exports.deleteBookFromCart = async(bookId, userId) => {
 exports.changeBookQuantity = async (bookId, quantity, userId) => {
     const user = await userModel.findById(userId)
     if(!user) throw new Error("User do not exist");
-    let indexOfBook
-    const bookToUpdate = user.cart.find((book, index) => {
-        if(book.bookId.toString() == bookId){
-            indexOfBook = index
-            return book
+    const cart = user.cart
+    for(let i = 0; i < cart.length; i++){
+        if(cart[i].bookId.toString() == bookId){
+            cart[i].quantity = quantity
         }
-    })
-    if(!bookToUpdate) throw new Error("Book is not in cart change")
-    bookToUpdate.quantity = quantity;
-    user.cart.splice(indexOfBook, 1)
-    user.cart.push(bookToUpdate);
+    }
+    user.cart = cart
     const updatedUser = await user.save();
     return updatedUser;
 }
@@ -130,5 +126,5 @@ exports.emptyCart = async(userId) => {
     if(!user) throw new Error("User do not exist");
     user.cart = []
     const updatedUser = await user.save();
-    return updatedUser
+    return updatedUser;
 }
