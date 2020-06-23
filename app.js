@@ -14,7 +14,7 @@ const corsOptions = {
     credentials: true
   };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(authenticate)
 app.use('/api/books', express.static('./public/books'))
 app.use('/graphql', ExpressGraphQL({
