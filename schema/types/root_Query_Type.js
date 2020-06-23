@@ -40,7 +40,13 @@ const RootQuery = new GraphQLObjectType({
                 return getUsers()
             }
         },
-        
+        getUser: {
+            type: UserType, 
+            resolve(parentValue, args, {user}){
+                checkUser(user);
+                return getUser(user.id);
+            }
+        },
         getAuthor:{
             type: AuthorType, 
             args: {
