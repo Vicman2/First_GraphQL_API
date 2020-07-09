@@ -8,11 +8,13 @@ const config = require('./config')
 
 const app = express()
 const port = config.port || 5000
-// enable cors
+
+
+// enable cors 
 const corsOptions = {
     origin: config.accessApi,
     credentials: true
-  };
+};
 
 app.use(cors(corsOptions));
 app.use(authenticate)

@@ -12,7 +12,7 @@ const orderSchema = new Schema({
         quantity: {type: Number, required: true}
     }], 
     totalPrice: {
-        type: Number, 
+        type: Number,
         required: true
     }
 }, {timestamps: true})
