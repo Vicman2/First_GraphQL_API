@@ -1,7 +1,7 @@
 const {GraphQLObjectType, GraphQLString, GraphQLNonNull, GraphQLID, GraphQLList} = require("graphql")
 const {login, getUsers, getUser} = require("../../services/user")
 const {getAuthor} = require('../../services/author')
-const {getBook, getBooks} = require('../../services/books')
+const {getBook, getBooks, searchBook} = require('../../services/books')
 const { getOrders, getOrder } = require("../../services/order")
 const OrderType = require('./OrderType')
 const BookType = require('../types/bookType')
@@ -89,6 +89,15 @@ const RootQuery = new GraphQLObjectType({
                 checkUser(user)
                 validateOrderId(args)
                 return getOrder(args.orderId, user.id);
+            }
+        },
+        searchBook: {
+            type: new GraphQLList( BookType),
+            args: {
+                bookName: {type: new GraphQLNonNull(GraphQLString)}
+            }, 
+            resolve(parentValue, args){
+                return searchBook(args.bookName)
             }
         }
     }

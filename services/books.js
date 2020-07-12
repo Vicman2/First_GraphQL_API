@@ -57,3 +57,9 @@ exports.deleteBook = async(id) => {
     const deletedBook = await existingBook.remove();
     return deletedBook;
 }
+exports.searchBook = async(searchBook) => {
+    const book  =new RegExp(searchBook)
+    const existing = await bookModel.find({title: {$regex : book, $options : 'i'}})
+    if(existing.length === 0) throw new Error("Book do not exist!")
+    return existing
+}
