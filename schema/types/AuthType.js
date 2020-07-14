@@ -10,7 +10,7 @@ const AuthType = new GraphQLObjectType({
         user: {
             type: userType, 
             resolve(parentValue, args){
-                return getUser(parentValue._doc.email)
+                return getUser(parentValue._doc)
             }
         }
     }
